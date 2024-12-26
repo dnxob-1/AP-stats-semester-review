@@ -3,6 +3,7 @@ import re
 import os
 import ast
 import random
+import numpy as np
 
 def makeSet(n):
     maininput = str(input("Enter number of list: "))
@@ -26,18 +27,21 @@ def makeSet(n):
 def selectSet(fileWorker):
     directory = './'  
 
-    text_files = [f for f in os.listdir(directory) if f.endswith('.txt')]
+    textFilesInDir = [f for f in os.listdir(directory) if f.endswith('.txt')]
 
-    print("Current .txt files in directory:")
-    for file in text_files:
-        print(file)
+    if textFilesInDir:
+        print("Current .txt files in directory:")
+        for file in textFilesInDir:
+            print(file)
 
-    fileWorker = input("Please choose a file to work with: ")
-    for file in text_files:
-        if fileWorker == file:
-            print("ok")
-            break
+        fileWorker = input("Please choose a file to work with: ")
+        for file in textFilesInDir:
+            if fileWorker == file:
+                print("ok")
+                break
 
+    else:
+        print("No text files in current directory. Make a new set first.")
     return fileWorker
 
 def mean(fileWorker):
@@ -63,17 +67,21 @@ def stdev(fileWorker):
 def removeFiles():
     directory = './'  
 
-    text_files = [f for f in os.listdir(directory) if f.endswith('.txt')]
+    textFilesInDir = [f for f in os.listdir(directory) if f.endswith('.txt')]
 
-    try:
-        print("Current .txt files in directory:")
-        for file in text_files:
-            print(file)
-        fileRemover = input("Please choose a file to remove: ")
-        os.remove(fileRemover)
-        print("Removed: ", fileRemover)
-    except FileNotFoundError:
-        print("Error: The file does not exist")
+    if textFilesInDir:
+        try:
+            print("Current .txt files in directory:")
+            for file in textFilesInDir:
+                print(file)
+            fileRemover = input("Please choose a file to remove: ")
+            os.remove(fileRemover)
+            print("Removed: ", fileRemover)
+        except FileNotFoundError:
+            print("Error: The file does not exist")
+
+    else:
+        print("No text files left in this current directory.")
 
 def zscore(fileWorker):
     xVal = int(input("X: "))
@@ -90,24 +98,164 @@ def zscore(fileWorker):
     except ZeroDivisionError:
         print("Error: stdev is equal to 0. Cannot divide by 0")
 
+    f.close()
 
 
-def advancedSets():
+def displayCurrentlySelectedSet(fileWorker):
+    print("Current file: ", fileWorker)
+
+def simpleSample(fileChoice, p):
+    try:
+        numberOfSample = int(input("Enter Number of samples: "))
+        fi = open(fileChoice, "r")
+        temp = fi.read().split()
+        samSet = random.sample(temp, numberOfSample)
+        print("ok. Sample set: ", samSet)
+        fi.close()
+        f = open(f"setSam{p}.txt", "w")
+        f.write(str(samSet))
+        f.close()
+    except ValueError:
+        print("Error: Enter a sample number less than the population or enter a nonnegative number for the sample size.")
+
+def stratifiedSample(fileChoice, p):
+    strataSize = int(input("Enter size of stratums: "))
+    samStrata = int(input("Enter number of samples: "))
+    strata = {}
+    finalSam = []
+    fi = open(fileChoice, "r")
+    samSet = fi.read()
+    fi.close()
+    samSet = ast.literal_eval(samSet)
+    for value in samSet:
+        stratum = (value // strataSize) * strataSize  
+        
+        if stratum not in strata:
+            strata[stratum] = []
+        
+        strata[stratum].append(value)
+
+    
+    for stratum, values in strata.items():
+        if len(values) >= samStrata:
+            finalSam.extend(random.sample(values, samStrata))
+        else:
+            finalSam.extend(values)
+
+    print(finalSam)
+    f = open(f"setSam{p}.txt", "w")
+    f.write(str(finalSam))
+    f.close()
+ 
+def systematicSample(fileChoice, p):
+    try:
+        fi = open(fileChoice, "r")
+        samSet = fi.read()
+        fi.close()
+        samSet = ast.literal_eval(samSet)
+        k = int(input("Number of steps: "))
+        numOfSample = int(input("Number of samples: "))
+        start = np.random.randint(0, k)
+        finalSam = samSet[start::k][:numOfSample]
+        f = open(f"setSam{p}.txt", "w")
+        f.write(str(finalSam))
+        f.close()
+        print("Sampled set: ", finalSam)
+    except ValueError:
+        print("Error: The max number of samples cannot be exceeded")
+
+    
+def clusterSample(fileChoice, p):
+    try:
+        clusterAmount = int(input("Cluster number: "))
+        clusterPoints = int(input("Cluster points: "))
+        wantedCluster = int(input("Clusters: "))
+        fi = open(fileChoice, "r")
+        samSet = fi.read()
+        fi.close()
+        samSet = ast.literal_eval(samSet)
+        samSet = np.array(samSet)
+        samSet = samSet.reshape(clusterAmount, clusterPoints)
+        clusters = random.sample(range(samSet.shape[0]), wantedCluster)
+        f = open(f"setSam{p}.txt", "w")
+        f.write(str(clusters))
+        f.close()
+        print("Sampled set: ", clusters)
+    except ValueError:
+        print("Error: Enter a nonnegative integer")
+
+
+def advancedSets(j, p):
     userChoice = str(input("(Sam)ple or (Pop)ulation: "))
-    if "pop" in userChoice:
+    directory = './'  
+    print(userChoice)
+    if userChoice.lower() == 'pop':
         print("Selected option: Population.")
-        popNumber = int(input("Population amount: "))
-        popRangeMin = int(input("Minimum number: "))
-        popRangeMax = int(input("Maximum number: "))
-        popSet = [0] * popNumber
-        for i in range(len(popSet)):
-            popSet[i] = random.randint(popRangeMin, popRangeMax)
+        manOrNot = str(input("Manually enter population (Y/n): "))
+        if manOrNot.lower() == 'y':
+            numOfPop = int(input("Enter number of list: "))
+    
+            arrToFile = [0] * numOfPop 
 
-        print(popSet)
+            for i in range(numOfPop):
+                try:
+                    arrToFile[i] = float(input(f"Number {i}: "))
+                    f = open(f"setPop{j}.txt", "w")
+                    f.write(str(arrToFile))
+                except ValueError:
+                    print("Error: Please enter a number")
+                    exit(1)
+            f.close()
+        elif manOrNot.lower() == 'n':
+            try:
+                popNumber = int(input("Population amount: "))
+                popRangeMin = int(input("Minimum number: "))
+                popRangeMax = int(input("Maximum number: "))
+                popSet = [0] * popNumber
+                for i in range(len(popSet)):
+                    popSet[i] = random.randint(popRangeMin, popRangeMax)
+                f = open(f"setPop{j}.txt", "w")
+                f.write(str(popSet))
+            except ValueError:
+                print("Error: Enter an integer")
+    elif userChoice.lower() == 'sam':
+        # p does not increment
+        print("Selected option: Sample.")
+        textFilesInDir = [f for f in os.listdir(directory) if f.startswith('setPop')]
+        if textFilesInDir:
+            print("Current population files in directory:")
+            for file in textFilesInDir:
+                print(file)
+            fileChoice = str(input("Choose a file to work with: "))
+            print(fileChoice, "has been chosen.")
+            try:
+                print("Techniques: Simple Random Sampling(SRS), Stratified Sampling(SS), Systematic Sampling(SYS), Cluster Sampling(CS)")
+                samTech = str(input("Choose a Sampling technique: "))
+                if samTech.lower() == 'srs':
+                    simpleSample(fileChoice, p)
+                elif samTech.lower() == 'ss':
+                    stratifiedSample(fileChoice, p)
+                elif samTech.lower() == 'sys':
+                    systematicSample(fileChoice, p)
+                elif samTech.lower() == 'cs':
+                    clusterSample(fileChoice, p)
+            except FileNotFoundError:
+                p -= 1
+                j -= 1
+                print("Error: File not found. Correct file?")
+
+        else:
+            print("No population files in current directory. Choose the Pop option.")
+
+
+#def plotData():
+
 
 def my_terminal():
-    print("Welcome to my AP Stats project.'help' for help.")
+    print("Welcome to my AP Stats project. 'help' for help.")
     n = 0
+    j = 0
+    p = 0
     fileWorker = ""
     while True:
         command = input(">> ").strip().lower()
@@ -115,14 +263,13 @@ def my_terminal():
             print("nighty!")
             break
         elif command == "help":
-            print("Commands: help, clear, echo, exit, selector, set, mean, stdev, zscore, remove, set advanced")
+            print("Commands: help, clear, echo, exit, selector, set, mean, stdev, zscore, remove, set advanced, display")
         elif command == "clear":
             os.system('cls' if os.name == 'nt' else 'clear')
         elif command.startswith("echo "):
             print(command[5:])
         elif command == "selector":
             fileWorker = selectSet(fileWorker)
-            print(fileWorker)
         elif command == "set":
             n += 1
             makeSet(n)
@@ -132,10 +279,15 @@ def my_terminal():
             stdev(fileWorker)
         elif command == "remove":
             removeFiles()
+            #make it so that it can be ran from the terminal and not a different function 
         elif command == "zscore":
             zscore(fileWorker)
         elif command == "set advanced":
-            advancedSets()
+            j += 1
+            p += 1
+            advancedSets(j, p)
+        elif command == "display":
+            displayCurrentlySelectedSet(fileWorker)
         else:
             print("Unknown command.")
 

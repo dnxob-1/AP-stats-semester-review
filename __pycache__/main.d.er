@@ -1,8 +1,21 @@
-##[pylyzer] failed /home/ffdnxob/projects/other/apStatsProject/main.py 1735082563 1497
-.statistics: Never
+##[pylyzer] failed /home/ffdnxob/projects/other/apStatsProject/main.py 1735158239 6428
+.stats: Never
 
 .re: Never
 
-.makeSet: Never
+.os: Never
+
+.ast: Never
+
+.random: Never
+
+.makeSet: (n: Obj) -> NoneType
+.selectSet: |E :> Str|(fileWorker: E) -> E
+.mean: (fileWorker: PathLike) -> Never
+.stdev: (fileWorker: PathLike) -> Never
+.removeFiles: () -> NoneType
+.zscore: (fileWorker: PathLike) -> Never
+.simpleSample: Never
+.advancedSets: |R: Type, Type_18: Type, Type_18 <: Structural({.__add__ = (self: Never, ?R) -> ?Type_18})|(j: Obj, p: Type_18) -> NoneType
 .my_terminal: () -> NoneType
 
