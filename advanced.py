@@ -8,7 +8,6 @@ import os
 def advancedSets(j, p):
     userChoice = str(input("(Sam)ple or (Pop)ulation: "))
     directory = './'  
-    print(userChoice)
     if userChoice.lower() == 'pop':
         print("Selected option: Population.")
         manOrNot = str(input("Manually enter population (Y/n): "))
@@ -39,7 +38,6 @@ def advancedSets(j, p):
             except ValueError:
                 print("Error: Enter an integer")
     elif userChoice.lower() == 'sam':
-        # p does not increment
         print("Selected option: Sample.")
         textFilesInDir = [f for f in os.listdir(directory) if f.startswith('setPop')]
         if textFilesInDir:

@@ -1,4 +1,5 @@
 import ast
+import random
 
 def stratifiedSample(fileChoice, p):
     strataSize = int(input("Enter size of stratums: "))
@@ -24,7 +25,7 @@ def stratifiedSample(fileChoice, p):
         else:
             finalSam.extend(values)
 
-    print(finalSam)
+    print("Sample:", finalSam)
     f = open(f"setSam{p}.txt", "w")
     f.write(str(finalSam))
     f.close()

@@ -1,4 +1,10 @@
 from selectFiles import selectSet
+from mode import mode
+from median import median
+from range import range
+from iqr import iqr
+from calculate import calculate
+from variance import variance
 from createSet import makeSet
 from mean import mean
 from stdev import stdev
@@ -11,7 +17,7 @@ from normcdf import cumulativeDistFunc
 from normpdf import probDensityFunc
 import os
 
-def my_terminal():
+def mainTerms():
     print("hi. 'help' for help.")
     directory = './'  
     n = 0
@@ -24,7 +30,7 @@ def my_terminal():
             print("nighty!")
             break
         elif command == "help":
-            print("Commands: help, clear, echo, ls, exit, selector, set, mean, stdev, zscore, remove, set advanced, display, plot, normcdf, normpdf")
+            print("Commands: help, clear, echo, ls, exit, select, set, mean, stdev, zscore, remove, set advanced, display, plot, normcdf, normpdf, median, mode, variance, iqr, range, calculate")
         elif command == "clear": 
             os.system('cls' if os.name == 'nt' else 'clear')
         elif command.startswith("echo "):
@@ -61,9 +67,21 @@ def my_terminal():
             cumulativeDistFunc(fileWorker)
         elif command == "normpdf":
             probDensityFunc(fileWorker)
+        elif command == "mode":
+            mode(fileWorker)
+        elif command == "range":
+            range(fileWorker)
+        elif command == "iqr":
+            iqr(fileWorker)
+        elif command == "median":
+            median(fileWorker)
+        elif command == "calculate":
+            calculate()
+        elif command == "variance":
+            variance(fileWorker)
         else:
             print("Unknown command.")
 
 
 if __name__ == "__main__":
-    my_terminal()
+    mainTerms()
