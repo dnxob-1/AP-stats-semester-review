@@ -15,6 +15,8 @@ from displaySet import displayCurrentlySelectedSet
 from plot import plotData
 from normcdf import cumulativeDistFunc
 from normpdf import probDensityFunc
+from pe import peFunc
+from moe import moeFunc
 import os
 
 def mainTerms():
@@ -30,7 +32,7 @@ def mainTerms():
             print("nighty!")
             break
         elif command == "help":
-            print("Commands: help, clear, echo, ls, exit, select, set, mean, stdev, zscore, remove, set advanced, display, plot, normcdf, normpdf, median, mode, variance, iqr, range, calculate")
+            print("Commands: help, clear, echo, ls, exit, select, set, mean, stdev, zscore, remove, set advanced, display, plot, normcdf, normpdf, median, mode, variance, iqr, range, calculate, pe, moe")
         elif command == "clear": 
             os.system('cls' if os.name == 'nt' else 'clear')
         elif command.startswith("echo "):
@@ -79,6 +81,10 @@ def mainTerms():
             calculate()
         elif command == "variance":
             variance(fileWorker)
+        elif command == "pe":
+            peFunc()
+        elif command == "moe":
+            moeFunc()
         else:
             print("Unknown command.")
 
