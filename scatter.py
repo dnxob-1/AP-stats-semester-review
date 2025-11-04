@@ -1,9 +1,17 @@
 import matplotlib.pyplot as plt
 import ast
+import os
+
 
 def scatterPlot(fileWorkers=None, useSelect=""):
     try:
-        if useSelect.lower() == 'y':
+
+        directory = "./"
+        print("Files in directory: ")
+        textFilesInDir = [f for f in os.listdir(directory) if f.endswith(".txt")]
+        for file in textFilesInDir:
+            print(file)
+        if useSelect.lower() == "y":
             f = open(fileWorkers, "r")
             data1 = f.read()
             f.close()
@@ -21,7 +29,7 @@ def scatterPlot(fileWorkers=None, useSelect=""):
             plt.title(plotTitle)
             plt.scatter(data1, data2)
             plt.show()
-        elif useSelect.lower() == 'n' or useSelect == "":
+        elif useSelect.lower() == "n" or useSelect == "":
             file = str(input("File to work with (x): "))
             f = open(file, "r")
             data1 = f.read()
@@ -43,5 +51,6 @@ def scatterPlot(fileWorkers=None, useSelect=""):
     except ValueError:
         print("Error: Did you enter a nonnegative integer?")
     except FileNotFoundError:
-        print("Error: Please check the files that you have chosen. One or more do not exist.")
-
+        print(
+            "Error: Please check the files that you have chosen. One or more do not exist."
+        )
